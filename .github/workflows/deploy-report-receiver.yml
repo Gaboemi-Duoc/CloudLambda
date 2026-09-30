@@ -4,7 +4,7 @@ on:
   push:
     branches: [main]
     paths:
-      - 'report-receiver/**'
+      - 'lambda-report-receiver/**'
       - '.github/workflows/deploy-report-receiver.yml'
   workflow_dispatch:
 
@@ -15,7 +15,7 @@ jobs:
       DATABASE_URL: ${{ secrets.DATABASE_URL }}
     defaults:
       run:
-        working-directory: report-receiver
+        working-directory: lambda-report-receiver
 
     steps:
       - name: Checkout
@@ -26,15 +26,15 @@ jobs:
         with:
           node-version: '20'
           cache: 'npm'
-          cache-dependency-path: report-receiver/package-lock.json
+          cache-dependency-path: lambda-report-receiver/package-lock.json
 
       - name: Install deps (prod only)
         run: npm ci --omit=dev
 
       - name: Build zip
         run: |
-          zip -r ../report-receiver.zip . -x "*.git*" "*.DS_Store*"
-          ls -lh ../report-receiver.zip
+          zip -r ../lambda-report-receiver.zip . -x "*.git*" "*.DS_Store*"
+          ls -lh ../lambda-report-receiver.zip
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
@@ -46,15 +46,15 @@ jobs:
       - name: Deploy to Lambda
         run: |
           aws lambda update-function-code \
-            --function-name "ReportReceiverFunction" \
-            --zip-file "fileb://../report-receiver.zip"
+            --function-name "$ReportReceiverFunction" \
+            --zip-file "fileb://../lambda-report-receiver.zip"
 
           aws lambda wait function-updated \
-            --function-name "ReportReceiverFunction"
+            --function-name "$ReportReceiverFunction"
 
       - name: Update Lambda env (DATABASE_URL)
         if: ${{ env.DATABASE_URL != '' }}
         run: |
           aws lambda update-function-configuration \
-            --function-name "ReportReceiverFunction" \
+            --function-name "$ReportReceiverFunction" \
             --environment "Variables={DATABASE_URL=${{ secrets.DATABASE_URL }}}"

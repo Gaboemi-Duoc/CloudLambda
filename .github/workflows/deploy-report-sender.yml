@@ -4,7 +4,7 @@ on:
   push:
     branches: [main]
     paths:
-      - 'report-sender/**'
+      - 'lambda-report-sender/**'
       - '.github/workflows/deploy-report-sender.yml'
   workflow_dispatch:
 
@@ -15,7 +15,7 @@ jobs:
       SNS_TOPIC_ARN: ${{ vars.SNS_TOPIC_ARN }}
     defaults:
       run:
-        working-directory: report-sender
+        working-directory: lambda-report-sender
 
     steps:
       - name: Checkout
@@ -26,15 +26,15 @@ jobs:
         with:
           node-version: '20'
           cache: 'npm'
-          cache-dependency-path: report-sender/package-lock.json
+          cache-dependency-path: lambda-report-sender/package-lock.json
 
       - name: Install deps (prod only)
         run: npm ci --omit=dev
 
       - name: Build zip
         run: |
-          zip -r ../report-sender.zip . -x "*.git*" "*.DS_Store*"
-          ls -lh ../report-sender.zip
+          zip -r ../lambda-report-sender.zip . -x "*.git*" "*.DS_Store*"
+          ls -lh ../lambda-report-sender.zip
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
@@ -46,11 +46,11 @@ jobs:
       - name: Deploy to Lambda
         run: |
           aws lambda update-function-code \
-            --function-name "ReportSenderFunction" \
-            --zip-file "fileb://../report-sender.zip"
+            --function-name "$ReportSenderFunction" \
+            --zip-file "fileb://../lambda-report-sender.zip"
 
           aws lambda wait function-updated \
-            --function-name "ReportSenderFunction"
+            --function-name "$ReportSenderFunction"
 
       - name: Update Lambda env (SNS_TOPIC_ARN)
         if: ${{ env.SNS_TOPIC_ARN != '' }}
