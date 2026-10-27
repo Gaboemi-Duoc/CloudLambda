@@ -1,0 +1,16 @@
+{
+  "name": "lambda-report-generator",
+  "version": "1.0.0",
+  "description": "Generates reports and sends them via SNS",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "@aws-sdk/client-sns": "^3.540.0",
+    "pg": "8.11.3"
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  }
+}

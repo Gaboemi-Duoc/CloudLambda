@@ -18,6 +18,7 @@ jobs:
           - lambda-enrollment-service
           - lambda-task-service
           - lambda-notification-worker
+          - lambda-report-generator
 
     env:
       DATABASE_URL: ${{ secrets.DATABASE_URL }}
