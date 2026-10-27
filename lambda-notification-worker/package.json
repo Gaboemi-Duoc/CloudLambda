@@ -1,0 +1,13 @@
+{
+  "name": "lambda-notification-worker",
+  "version": "1.0.0",
+  "description": "Lambda function for processing SQS notifications",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {},
+  "engines": {
+    "node": ">=20.0.0"
+  }
+}
