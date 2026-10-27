@@ -1,7 +1,12 @@
 const { Pool } = require('pg');
 const { SNSClient, PublishCommand } = require('@aws-sdk/client-sns');
 
-const pool = new Pool({ connectionString: process.env.DATABASE_URL });
+const pool = new Pool({ 
+    connectionString: process.env.DATABASE_URL,
+    ssl: {
+        rejectUnauthorized: false
+    }
+});
 const snsClient = new SNSClient({ region: process.env.AWS_REGION });
 
 const publishEvent = async (type, message, data) => {
