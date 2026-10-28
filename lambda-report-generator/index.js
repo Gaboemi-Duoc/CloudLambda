@@ -65,9 +65,13 @@ async function handleAction(action, data) {
                 Message: JSON.stringify({ 
                     type: 'REPORT_GENERATED', 
                     message: notificationText,
-                    data: { reportId: savedReport.rows[0].id }
+                    data: { 
+                        reportId: savedReport.rows[0].id,
+                        requestedBy: data.requestedBy, // <-- Pass the email
+                        reportData: rows               // <-- Pass the raw data for the email
+                    }
                 }),
-                MessageAttributes: { // <-- Added for SNS Filter Policy
+                MessageAttributes: { 
                     "type": {
                         DataType: "String",
                         StringValue: "REPORT_GENERATED"
